@@ -1,0 +1,8 @@
+checkpoints/
+*.npy
+logdir/
+*.pkl
+*.out
+__pycache__/
+temp/
+*.data
