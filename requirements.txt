@@ -1,0 +1,6 @@
+opencv-python~=3.4.8.29
+tensorflow-gpu~=2.1.0
+numpy~=1.17.2
+matplotlib~=3.0.3
+Pillow~=6.2.1
+scikit-image~=0.16.2

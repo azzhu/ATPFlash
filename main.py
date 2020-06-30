@@ -137,65 +137,64 @@ class OD2(OD):
     更正第一版的问题
     '''
 
-    def __init__(self, src_img_path, kernel_size, dst_img_path, is_dir=False):
-        super().__init__(src_img_path, kernel_size, dst_img_path, is_dir)
+    def __init__(self, src_img_dir, der_param=9, der_th=21, smooth_ker=7):
+        super().__init__(src_img_dir, 3, None, False)
         # self.h = 19  # 求导的跨度大小，(f(x+h)-f(x))/h
         # self.smooth_ker = 5
         # self.der_th = 45
-        self.h = 9  # 求导的跨度大小，(f(x+h)-f(x))/h
-        self.smooth_ker = 7
-        self.der_th = 21
-        print()
+        self.h = der_param  # 求导的跨度大小，(f(x+h)-f(x))/h
+        self.smooth_ker = smooth_ker
+        self.der_th = der_th
 
-    def test(self):
-        # # part 1
-        # self.load_img()
-        # x = tf.constant(self.img[np.newaxis, :, :, :, np.newaxis], dtype=tf.float16)
-        # skh = int(self.smooth_ker / 2)
-        # ker_l = self.h + 2 * skh
-        # ker = np.zeros((1, 1, ker_l), dtype=np.float16) / ker_l
-        # ker[:, :, :self.smooth_ker] = -1 / self.smooth_ker
-        # ker[:, :, -self.smooth_ker:] = 1 / self.smooth_ker
-        # t1 = time.time()
-        # x = KL.Conv3D(1, (1, 1, ker_l), use_bias=False,
-        #               kernel_initializer=tf.initializers.constant(value=ker),
-        #               trainable=False, padding='valid')(x)
-        # print(f'conv3d timeuse:{time.time() - t1}')
-        # print(tf.reduce_max(x))
-        # print(tf.reduce_min(x))
-        # dst = x.numpy()
-        # dst = dst[0, :, :, :, 0]
-        # print(dst.shape)
-        # np.save('temp/der.npy', dst)
-        # dst = np.transpose(dst, (2, 0, 1))
-        # # dst = np.transpose(dst, (1, 2, 0))
-        # # dst = dst[:, 155, :]
-        # dst = 255. / (dst.max() - dst.min()) * (dst - dst.min())
-        # # dst = dst[20:]
-        # dst = dst.astype(np.uint8)
-        # io.imsave('temp/der.tif', dst)
-        # # cv2.imwrite('temp/der.tif', dst)
-
-        # # part2
-        # x = np.load('temp/der.npy')
-        # x = np.transpose(x, (2, 0, 1))
-        # max_ps = x > 45
-        # max_ps = max_ps.astype(np.uint8) * 255
-        # io.imsave('temp/max_ps.tif', max_ps)
-        # np.save('temp/max_ps.npy', max_ps)
-        # max_ps = max_ps.astype(np.int32)
-        # max_ps = np.sum(max_ps, 0)
-        # max_ps = max_ps.astype(np.bool).astype(np.uint8) * 255
-        # cv2.imwrite('temp/max_ps.bmp', max_ps)
-        # print()
-
-        max_ps = np.load('temp/max_ps.npy')
-        min_ps = np.load('temp/min_ps.npy')
-        # max_ps = max_ps[:, :, :, np.newaxis]
-        # min_ps = min_ps[:, :, :, np.newaxis]
-        zeros = np.zeros_like(max_ps)
-        res = np.stack((max_ps, min_ps, min_ps), -1)
-        io.imsave('temp/res_rgb.tif', res)
+    # def test(self):
+    #     # # part 1
+    #     # self.load_img()
+    #     # x = tf.constant(self.img[np.newaxis, :, :, :, np.newaxis], dtype=tf.float16)
+    #     # skh = int(self.smooth_ker / 2)
+    #     # ker_l = self.h + 2 * skh
+    #     # ker = np.zeros((1, 1, ker_l), dtype=np.float16) / ker_l
+    #     # ker[:, :, :self.smooth_ker] = -1 / self.smooth_ker
+    #     # ker[:, :, -self.smooth_ker:] = 1 / self.smooth_ker
+    #     # t1 = time.time()
+    #     # x = KL.Conv3D(1, (1, 1, ker_l), use_bias=False,
+    #     #               kernel_initializer=tf.initializers.constant(value=ker),
+    #     #               trainable=False, padding='valid')(x)
+    #     # print(f'conv3d timeuse:{time.time() - t1}')
+    #     # print(tf.reduce_max(x))
+    #     # print(tf.reduce_min(x))
+    #     # dst = x.numpy()
+    #     # dst = dst[0, :, :, :, 0]
+    #     # print(dst.shape)
+    #     # np.save('temp/der.npy', dst)
+    #     # dst = np.transpose(dst, (2, 0, 1))
+    #     # # dst = np.transpose(dst, (1, 2, 0))
+    #     # # dst = dst[:, 155, :]
+    #     # dst = 255. / (dst.max() - dst.min()) * (dst - dst.min())
+    #     # # dst = dst[20:]
+    #     # dst = dst.astype(np.uint8)
+    #     # io.imsave('temp/der.tif', dst)
+    #     # # cv2.imwrite('temp/der.tif', dst)
+    #
+    #     # # part2
+    #     # x = np.load('temp/der.npy')
+    #     # x = np.transpose(x, (2, 0, 1))
+    #     # max_ps = x > 45
+    #     # max_ps = max_ps.astype(np.uint8) * 255
+    #     # io.imsave('temp/max_ps.tif', max_ps)
+    #     # np.save('temp/max_ps.npy', max_ps)
+    #     # max_ps = max_ps.astype(np.int32)
+    #     # max_ps = np.sum(max_ps, 0)
+    #     # max_ps = max_ps.astype(np.bool).astype(np.uint8) * 255
+    #     # cv2.imwrite('temp/max_ps.bmp', max_ps)
+    #     # print()
+    #
+    #     max_ps = np.load('temp/max_ps.npy')
+    #     min_ps = np.load('temp/min_ps.npy')
+    #     # max_ps = max_ps[:, :, :, np.newaxis]
+    #     # min_ps = min_ps[:, :, :, np.newaxis]
+    #     zeros = np.zeros_like(max_ps)
+    #     res = np.stack((max_ps, min_ps, min_ps), -1)
+    #     io.imsave('temp/res_rgb.tif', res)
 
     def calc_derivative(self):
         os.environ['CUDA_VISIBLE_DEVICES'] = ''
@@ -350,19 +349,11 @@ class OD2(OD):
 
 if __name__ == '__main__':
     t1 = time.time()
-    # x = '(12, 6)'
-    # print(str(x[1:]))
-    # exit()
     od = OD2(
-        src_img_path='/home/zhangli_lab/zhuqingjie/DATA/chenyue/lps12.tif.frames',
-        dst_img_path='/home/zhangli_lab/zhuqingjie/dataset/temp/Muti_dst.tif',
-        kernel_size=3,
-        is_dir=True,
+        src_img_dir='/home/zhangli_lab/zhuqingjie/DATA/chenyue/lps12.tif.frames',
+        der_param=9,
+        der_th=21,
+        smooth_ker=7,
     )
-    # od.calc_derivative()
-    # od.view_distribution()
-    # od.calc_keypoints()
-    # od.img_merge()
     od.run()
-    print('ok')
     print(f'time_used:{(time.time() - t1) / 60}')
